@@ -25,6 +25,7 @@
           } }],
           "no-plusplus":"off",
           "consistent-return":"warn",
+          "global-require": "off",
           "space-before-function-paren":"off",
           "no-path-concat":"off",
           "no-param-reassign":"warn",
