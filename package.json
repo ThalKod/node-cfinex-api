@@ -1,0 +1,13 @@
+{
+  "name": "cfinex-node-api",
+  "version": "1.0.0",
+  "description": "CFINEX Node API - asynchronous node.js library for the CFINEX API https://cfinex.com/",
+  "main": "node-binance-api.js",
+  "author": "ThalKod (https://github.com/ThalKod)",
+  "license": "MIT",
+  "dependencies": {
+    "eslint": "^5.3.0",
+    "eslint-config-airbnb-base": "^13.0.0",
+    "eslint-plugin-import": "^2.13.0"
+  }
+}
