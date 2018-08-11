@@ -2,7 +2,7 @@
   "name": "cfinex-node-api",
   "version": "1.0.0",
   "description": "CFINEX Node API - asynchronous node.js library for the CFINEX API https://cfinex.com/",
-  "main": "node-binance-api.js",
+  "main": "node-cfinex-api.js",
   "author": "ThalKod (https://github.com/ThalKod)",
   "license": "MIT",
   "dependencies": {

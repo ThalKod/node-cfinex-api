@@ -6,7 +6,7 @@
  * Released under the MIT License
  * ============================================================ */
 
- let api = function cfinex(options){
+ const api = (options)=>{
   const request = require("request");
   const assign = require("object-assign");
   const sha512 = require("js-sha512");
@@ -80,7 +80,7 @@
       uri = updateQueryStringParameter(uri, o[i], options[o[i]]);
     }
 
-    op.headers.apisign = sha512.hmac(uri, opts.apisecret); // setting the HMAC hash `apisign` http header
+    // op.headers.apisign = sha512.hmac(uri, opts.apisecret); // setting the HMAC hash `apisign` http header
     op.uri = uri;
     // op.timeout = opts.requestTimeoutInSeconds * 1000;
 
@@ -101,6 +101,11 @@
   };
 
 
+  const sendRequestCallback = (callback, op)=>{
+    callback(op);
+  };
+
+
   const publicApiCall = (url, callback, options)=>{
     const op = assign({}, defaultRequestOptions);
     if(!options) {
@@ -109,15 +114,35 @@
     sendRequestCallback(callback, (!options) ? op : setRequestUriGetParams(url, options));
   };
 
-  const credentialApiCall = (url, callback, options)=>{
+  const privateApiCall = (url, callback, options)=>{
     if(options) {
       options = setRequestUriGetParams(apiCredentials(url), options);
     }
     sendRequestCallback(callback, options);
   };
 
+  return {
+    options: (options)=>{
+      extractOptions(options);
+    },
+    sendCustomRequest: (requestString, priv, callback)=>{
+      let op;
 
+      if(priv === true) {
+        op = apiCredentials(requestString);
+      }else{
+        op = assign({}, defaultRequestOptions, { uri: requestString });
+      }
+      sendRequestCallback(callback, op);
+    },
+    getmarkets: (callback)=>{
+      publicApiCall(opts.baseUrl + "api=public", callback, { method: "markets" });
+    },
+    getOpenOrders: (options, callback)=>{
+      publicApiCall(opts.baseUrl + "api=public", callback, { method: "OpenOrders", ...options });
+    },
+  };
  };
 
 
- module.exports = api;
+ module.exports = api();
