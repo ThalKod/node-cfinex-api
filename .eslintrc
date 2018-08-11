@@ -30,6 +30,7 @@
           "no-path-concat":"off",
           "no-param-reassign":"warn",
           "prefer-destructuring":"off",
-          "no-else-return":"off"
+          "no-else-return":"off",
+          "no-shadow": "off"
     }
 }
