@@ -64,20 +64,24 @@
     return setRequestUriGetParams(uri, opt);
   };
 
-  const setRequestUriGetParams = (uri, options)=>{
+  const setRequestUriGetParams = (uri, options, priv = false)=>{
     let op;
     if(typeof (uri) === "object"){
       op = uri;
       uri = op.uri;
     }else{
       op = assign({}, defaultRequestOptions);
+      if(options.apikey) op.method = "POST";
     }
 
+    // console.log("OPTONS :", options);
 
-    const o = Object.keys(options);
+    if(!options.apikey && !priv){
+      const o = Object.keys(options);
 
-    for(let i = 0; i < o.length; i++) {
-      uri = updateQueryStringParameter(uri, o[i], options[o[i]]);
+      for(let i = 0; i < o.length; i++) {
+        uri = updateQueryStringParameter(uri, o[i], options[o[i]]);
+      }
     }
 
     // op.headers.apisign = sha512.hmac(uri, opts.apisecret); // setting the HMAC hash `apisign` http header
@@ -114,11 +118,25 @@
     sendRequestCallback(callback, (!options) ? op : setRequestUriGetParams(url, options));
   };
 
+  const addPostData = (pre, options)=>{
+    options.form = {
+      api: "private",
+      apikey: opts.apikey,
+      nonce: getNonce(),
+      ...pre,
+    };
+
+    return options;
+  };
+
   const privateApiCall = (url, callback, options)=>{
+    let pre = {};
     if(options) {
-      options = setRequestUriGetParams(apiCredentials(url), options);
+      pre = options;
+      options = setRequestUriGetParams(apiCredentials(url), options, true);
     }
-    sendRequestCallback(callback, options);
+    const fullOptions = addPostData(pre, options);
+    sendRequestCallback(callback, fullOptions);
   };
 
   return {
@@ -135,11 +153,17 @@
       }
       sendRequestCallback(callback, op);
     },
-    getmarkets: (callback)=>{
+    getMarkets: (callback)=>{
       publicApiCall(opts.baseUrl + "api=public", callback, { method: "markets" });
     },
-    getOpenOrders: (options, callback)=>{
+    getAllOpenOrders: (options, callback)=>{
       publicApiCall(opts.baseUrl + "api=public", callback, { method: "OpenOrders", ...options });
+    },
+    getTicks: (callback)=>{
+      publicApiCall(opts.baseUrl + "api=public", callback, { method: "tickerapi" });
+    },
+    getBalances: (callback)=>{
+      privateApiCall(opts.baseUrl, callback, { method: "balances" });
     },
   };
  };
