@@ -4,6 +4,11 @@
  * Released under the MIT License
  * ============================================================ */
 
+ /**
+ * Node Binance API
+ * @module Thalkod/node-cfinex-api
+ * @return {object} instance to class object
+ */
  const api = (options)=>{
   const request = require("request");
   const assign = require("object-assign");
@@ -27,6 +32,10 @@
 
   let lastNonces = [];
 
+  /**
+     * Get the current timestamp
+     * @return {integer} current timestamp
+     */
   const getNonce = ()=>{
     let nonce = new Date().getTime();
 
@@ -41,6 +50,10 @@
     return nonce;
   };
 
+  /**
+     * Extract list of options
+     * @param {object} options - list of options
+     */
   const extractOptions = (options)=>{
     const o = Object.keys(options);
 
@@ -53,6 +66,11 @@
     extractOptions(options);
   }
 
+  /**
+    * Setup API Credentials
+    * @param {string} uri - uri address
+    * @return {object} modified options
+    */
   const apiCredentials = (uri)=>{
     const opt = {
       apikey: opts.apikey,
@@ -62,6 +80,13 @@
     return setRequestUriGetParams(uri, opt);
   };
 
+  /**
+     * Set params request in uri
+     * @param {string/object} uri - uri
+     * @param {object} connString - options list
+     * @param {boolean} priv - is private api call ?
+     * @return {object} modified options
+     */
   const setRequestUriGetParams = (uri, options, priv = false)=>{
     let op;
     if(typeof (uri) === "object"){
@@ -89,6 +114,13 @@
     return op;
   };
 
+  /**
+     * Update the querry parameters
+     * @param {string} uri - uri
+     * @param {string} key - defined key
+     * @param {string} value - value of the key
+     * @return {string} modified uri
+     */
   const updateQueryStringParameter = (uri, key, value)=>{
     const re = new RegExp("([?&])" + key + "=.*?(&|$)", "i");
     const separator = uri.indexOf("?") !== -1 ? "&" : "?";
@@ -107,7 +139,12 @@
     callback(op);
   };
 
-
+  /**
+     * Set up public api call
+     * @param {string} url - the url
+     * @param {function} function - callback function
+     * @param {object} options - the options
+     */
   const publicApiCall = (url, callback, options)=>{
     const op = assign({}, defaultRequestOptions);
     if(!options) {
@@ -116,6 +153,12 @@
     sendRequestCallback(callback, (!options) ? op : setRequestUriGetParams(url, options));
   };
 
+  /**
+     * Add the post data
+     * @param {object} pre - the key to setup
+     * @param {object} options - the options
+     * @returns {object} options - modified options
+     */
   const addPostData = (pre, options)=>{
     options.form = {
       api: "private",
@@ -130,6 +173,7 @@
         temp += updateQueryStringParameter("", o[i], pre[o[i]]);
       }
     const data = temp.substr(1);
+    console.log(data);
     const encryptedData = sha512.hmac(opts.apisecret, data);
     options.form = {
       data: encryptedData,
@@ -138,6 +182,12 @@
     return options;
   };
 
+  /**
+     * Set up private api call
+     * @param {string} url - the url
+     * @param {function} function - callback function
+     * @param {object} options - the options
+     */
   const privateApiCall = (url, callback, options)=>{
     let pre = {};
     if(options) {
@@ -149,40 +199,78 @@
   };
 
   return {
+    /**
+     * Set options
+     * @param {object} options - The api otpions
+     */
     options: (options)=>{
       extractOptions(options);
     },
-    sendCustomRequest: (requestString, priv, callback)=>{
-      let op;
 
-      if(priv === true) {
-        op = apiCredentials(requestString);
-      }else{
-        op = assign({}, defaultRequestOptions, { uri: requestString });
-      }
-      sendRequestCallback(callback, op);
-    },
+    /**
+     * Getting Markets
+     * @param {function} callback - callback function
+     */
     getMarkets: (callback)=>{
       publicApiCall(opts.baseUrl + "api=public", callback, { method: "markets" });
     },
+
+    /**
+     * Get all the open order
+     * @param {object} options - the options
+     * @param {function} callback - callback function
+     */
     getAllOpenOrders: (options, callback)=>{
       publicApiCall(opts.baseUrl + "api=public", callback, { method: "OpenOrders", ...options });
     },
+
+    /**
+     * Get markets tick
+     * @param {function} callback - callback function
+     */
     getTicks: (callback)=>{
       publicApiCall(opts.baseUrl + "api=public", callback, { method: "tickerapi" });
     },
+
+    /**
+     * Get current balances
+     * @param {function} callback - callback function
+     */
     getBalances: (callback)=>{
       privateApiCall(opts.baseUrl, callback, { method: "balances" });
     },
+
+    /**
+     * Get private open order
+     * @param {function} callback - callback function
+     */
     getOpenOrders: (callback)=>{
       privateApiCall(opts.baseUrl, callback, { method: "openOrders" });
     },
+
+    /**
+     * Set New Order
+     * @param {object} options - the options
+     * @param {function} callback - callback function
+     */
     setNewOrder: (options, callback)=>{
       privateApiCall(opts.baseUrl, callback, { method: "order", ...options });
     },
+
+    /**
+     * Cancel an order
+     * @param {object} options - the options
+     * @param {function} callback - callback function
+     */
     cancelOrder: (options, callback)=>{
       privateApiCall(opts.baseUrl, callback, { method: "orderCancel", ...options });
     },
+
+    /**
+     * Get the accounts addresses
+     * @param {object} options - the options
+     * @param {function} callback - callback function
+     */
     getAccountAddresses: (options, callback)=>{
       privateApiCall(opts.baseUrl, callback, { method: "addresses", ...options });
     },
