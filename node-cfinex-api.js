@@ -1,8 +1,6 @@
 /* ============================================================
  * node-cfinex-api
- *
  * ============================================================
- * Copyright 2018-, ThalKod
  * Released under the MIT License
  * ============================================================ */
 
@@ -126,6 +124,17 @@
       ...pre,
     };
 
+    const o = Object.keys(pre);
+    let temp = "";
+      for(let i = 0; i < o.length; i++) {
+        temp += updateQueryStringParameter("", o[i], pre[o[i]]);
+      }
+    const data = temp.substr(1);
+    const encryptedData = sha512.hmac(opts.apisecret, data);
+    options.form = {
+      data: encryptedData,
+    };
+
     return options;
   };
 
@@ -164,6 +173,18 @@
     },
     getBalances: (callback)=>{
       privateApiCall(opts.baseUrl, callback, { method: "balances" });
+    },
+    getOpenOrders: (callback)=>{
+      privateApiCall(opts.baseUrl, callback, { method: "openOrders" });
+    },
+    setNewOrder: (options, callback)=>{
+      privateApiCall(opts.baseUrl, callback, { method: "order", ...options });
+    },
+    cancelOrder: (options, callback)=>{
+      privateApiCall(opts.baseUrl, callback, { method: "orderCancel", ...options });
+    },
+    getAccountAddresses: (options, callback)=>{
+      privateApiCall(opts.baseUrl, callback, { method: "addresses", ...options });
     },
   };
  };
