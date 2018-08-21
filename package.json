@@ -5,6 +5,13 @@
   "main": "node-cfinex-api.js",
   "author": "ThalKod",
   "license": "MIT",
+  "scripts": {
+    "test": "jest"
+  },
+  "keywords": [
+    "cfinex",
+    "api"
+  ],
   "dependencies": {
     "eslint": "^5.3.0",
     "eslint-config-airbnb-base": "^13.0.0",
