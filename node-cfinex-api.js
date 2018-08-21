@@ -5,7 +5,7 @@
  * ============================================================ */
 
  /**
- * Node Binance API
+ * Node Cfinex API
  * @module Thalkod/node-cfinex-api
  * @return {object} instance to class object
  */
@@ -107,9 +107,7 @@
       }
     }
 
-    // op.headers.apisign = sha512.hmac(uri, opts.apisecret); // setting the HMAC hash `apisign` http header
     op.uri = uri;
-    // op.timeout = opts.requestTimeoutInSeconds * 1000;
 
     return op;
   };
@@ -136,7 +134,29 @@
 
 
   const sendRequestCallback = (callback, op)=>{
-    callback(op);
+
+    request(op, (error, result, body)=>{
+      if(!body || !result || result.statusCode !== 200) {
+
+        const errorObj = {
+          success: false,
+          message: "request error",
+          error,
+          result,
+        };
+
+        return callback(errorObj);
+      }else{
+        try {
+          result = JSON.parse(body);
+        } catch (err) {}
+        if(!result || !result.success) {
+          // error returned by Cfinex API - forward the result as an error
+          return callback(result);
+        }
+        return callback(result);
+      }
+    });
   };
 
   /**
@@ -173,7 +193,6 @@
         temp += updateQueryStringParameter("", o[i], pre[o[i]]);
       }
     const data = temp.substr(1);
-    console.log(data);
     const encryptedData = sha512.hmac(opts.apisecret, data);
     options.form = {
       data: encryptedData,
@@ -271,7 +290,7 @@
      * @param {object} options - the options
      * @param {function} callback - callback function
      */
-    getAccountAddresses: (options, callback)=>{
+    getAccountAddresses: (callback)=>{
       privateApiCall(opts.baseUrl, callback, { method: "addresses", ...options });
     },
   };

@@ -8,7 +8,7 @@ cfinex.options({
 // *********** Public api call
 
 // Get markets
-cfinex.getmarkets((re)=>{
+cfinex.getMarkets((re)=>{
     console.log("getmarkets()", re);
 });
 
@@ -36,7 +36,7 @@ cfinex.cancelOrder({ uid: 229392002 }, (re)=>{
 });
 
 // Set a new order
-cfinex.setNewOrder({ pair: "LTC-BTC", type: "Buy", amount: 1000, price: 0.00000001 }, (re)=>{
+cfinex.setNewOrder({ pair: "LTC-BTC", type: "Buy", amount: 1000, price: 0.0001 }, (re)=>{
     console.log("setNewOrder()", re);
 });
 
@@ -49,4 +49,3 @@ cfinex.getOpenOrders((re)=>{
 cfinex.getAccountAddresses((re)=>{
     console.log("getAccountAddresses()", re);
 });
-
