@@ -298,3 +298,4 @@
 
 
  module.exports = api();
+ module.exports.createInstance = api;
