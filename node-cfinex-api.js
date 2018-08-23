@@ -134,7 +134,7 @@
 
 
   const sendRequestCallback = (callback, op)=>{
-
+    
     request(op, (error, result, body)=>{
       if(!body || !result || result.statusCode !== 200) {
 
@@ -193,10 +193,8 @@
         temp += updateQueryStringParameter("", o[i], pre[o[i]]);
       }
     const data = temp.substr(1);
-    const encryptedData = sha512.hmac(opts.apisecret, data);
-    options.form = {
-      data: encryptedData,
-    };
+    const encryptedData =  sha512.hmac(opts.apisecret, data);
+    options.form.data = encryptedData;
 
     return options;
   };
@@ -291,7 +289,7 @@
      * @param {function} callback - callback function
      */
     getAccountAddresses: (callback)=>{
-      privateApiCall(opts.baseUrl, callback, { method: "addresses", ...options });
+      privateApiCall(opts.baseUrl, callback, { method: "addresses" });
     },
   };
  };
