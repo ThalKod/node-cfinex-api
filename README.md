@@ -15,7 +15,7 @@ const cfinex = require("../node-cfinex-api")().options({
 
 #### Instantiating Multiple Instances
 ```javascript
-const cfinex = require('node-binance-api');
+const cfinex = require('node-cfinex-api');
 
 const instance1 = cfinex.createInstance({
     //
